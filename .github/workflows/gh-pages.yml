@@ -6,9 +6,9 @@ name: Publich to GH Pages
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,16 +24,20 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.1
-        
+
       - name: Install Yarn Dependencies
         run: yarn
-        
+
       - name: Build with Parcel
         run: yarn build
-        
-      - name: Deploy to GH Pages
-        run: git add dist && git commit -m "Publish changes to gh pages" && git subtree push --prefix dist origin gh-pages
 
+      - name: Deploy to GH Pages
+        run: |
+          yarn prebuild
+          yarn build-dev
+          git add dist
+          git commit -m "Publish changes"
+          yarn push-gh-pages

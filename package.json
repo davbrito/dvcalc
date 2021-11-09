@@ -5,14 +5,19 @@
   "source": "src/index.html",
   "scripts": {
     "start": "parcel serve --open",
-    "build": "parcel build"
+    "build": "parcel build",
+    "build-dev": "parcel build --no-optimize",
+    "prebuild": "shx rm -rf dist/*",
+    "push-gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose"
   },
   "keywords": [
     "javascript"
   ],
   "packageManager": "yarn@3.1.0",
   "devDependencies": {
-    "parcel": "^2.0.1"
+    "parcel": "^2.0.1",
+    "push-dir": "^0.4.1",
+    "shx": "^0.3.3"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead"
 }
