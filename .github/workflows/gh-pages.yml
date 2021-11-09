@@ -32,7 +32,7 @@ jobs:
         run: yarn
 
       - name: Build with Parcel
-        run: yarn build-dev --public-url dvcalc
+        run: yarn build-dev --public-url /dvcalc
 
 
       - name: Deploy 🚀
