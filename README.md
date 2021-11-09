@@ -1,2 +1,3 @@
 # dvcalc
-Created with CodeSandbox
+
+Simple calculator app using vanilla javascript
