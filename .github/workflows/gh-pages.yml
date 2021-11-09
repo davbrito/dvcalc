@@ -32,12 +32,11 @@ jobs:
         run: yarn
 
       - name: Build with Parcel
-        run: yarn build
+        run: yarn build-dev
 
-      - name: Deploy to GH Pages
-        run: |
-          yarn prebuild
-          yarn build-dev
-          git add dist
-          git commit -m "Publish changes"
-          yarn push-gh-pages
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: dist
