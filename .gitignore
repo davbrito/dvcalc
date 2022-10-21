@@ -1,11 +1,8 @@
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+.yarn/
 
 # Parcel
 .parcel-cache
 dist
+
+node_modules/
+.eslintcache

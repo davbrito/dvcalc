@@ -28,12 +28,11 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.1
 
-      - name: Install Yarn Dependencies
-        run: yarn
+      - name: Install Dependencies
+        run: npm ci --no-audit --no-fund
 
       - name: Build with Parcel
-        run: yarn build-dev --public-url /dvcalc
-
+        run: npm run build-dev -- --public-url /dvcalc
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
