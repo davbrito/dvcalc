@@ -3,24 +3,48 @@ import { invariant } from "./utils";
 
 type Operator = "+" | "-" | "/" | "*";
 
+export interface Operand {
+  value: number;
+  operator: Operator | null;
+}
+
 export interface State {
   output: string;
-  operands: { value: number; operator: Operator }[];
+  operands: Operand[];
+  history: {
+    output: string;
+    operands: Operand[];
+  }[];
 }
 
 function isValidOperator(value: string): value is Operator {
   return ["+", "-", "/", "*"].includes(value);
 }
 
-const initialState: State = { output: "0", operands: [] };
+const historyKey = "dvcalc-history";
+
+const initialHistory =
+  JSON.parse(localStorage.getItem(historyKey) || "[]") || [];
+
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem(historyKey, JSON.stringify(store.getState().history));
+});
+
+const initialState: State = {
+  output: "0",
+  operands: [],
+  history: initialHistory,
+};
 
 export const store = new Store(initialState, {
   operator(state, value: number, operator: string) {
     invariant(isValidOperator(operator), "invalid operator: " + operator);
     const operands = [...state.operands, { value, operator }];
-    return { operands, output: "0" };
+    return { ...state, operands, output: "0" };
   },
   calculate(state) {
+    if (state.operands.length == 0) return state;
+
     const finalOperands = [
       ...state.operands,
       { value: Number.parseFloat(state.output), operator: null },
@@ -37,14 +61,18 @@ export const store = new Store(initialState, {
       return { value, operator: right.operator };
     });
 
-    return { operands: [], output: String(result.value) };
+    const output = String(result.value);
+
+    const history = [...state.history, { output, operands: finalOperands }];
+
+    return { history, operands: [], output: output };
   },
   input(state, value: string) {
     const output = state.output === "0" ? value : state.output + value;
     return { ...state, output };
   },
-  clear() {
-    return { output: "0", operands: [] };
+  clear(state) {
+    return { ...state, output: "0", operands: [] };
   },
   dot(state) {
     if (!state.output.includes(".")) {
@@ -52,5 +80,13 @@ export const store = new Store(initialState, {
     }
 
     return state;
+  },
+  removeHistoryEntry(state, index: number) {
+    return {
+      ...state,
+      history: state.history.filter(
+        (_, currentIndex) => currentIndex !== index
+      ),
+    };
   },
 });

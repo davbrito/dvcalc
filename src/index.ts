@@ -1,4 +1,4 @@
-import { State, store } from "./store";
+import { Operand, State, store } from "./store";
 import "./styles.css";
 import { invariant } from "./utils";
 
@@ -20,6 +20,7 @@ const dot = select<HTMLButtonElement>("button[data-dot]");
 const result = select<HTMLDivElement>("#result");
 const operation = select<HTMLDivElement>("#operation");
 const outputWrapper = select<HTMLDivElement>("#output-wrapper");
+const history = select<HTMLOListElement>("#history-list");
 
 calculate.addEventListener("click", handleCalculate);
 clear.addEventListener("click", handleClear);
@@ -42,22 +43,41 @@ operators.forEach((button) => {
   button.addEventListener("click", handleOperator);
 });
 
-function update(state: State) {
-  result.innerText = state.output;
-  operation.innerText =
-    state.operands.reduce((acc, curr) => {
-      return [acc, curr.value, curr.operator]
-        .filter((item) => item != null)
-        .join(" ");
-    }, "") +
-    " " +
-    state.output;
+function formatOperands(operands: Operand[]) {
+  return operands.reduce((acc, curr) => {
+    return [acc, curr.value, curr.operator]
+      .filter((item) => item != null)
+      .join(" ");
+  }, "");
 }
 
-const { updaters, getState, subscribe } = store;
+function update(state: State) {
+  result.innerText = state.output;
+  operation.innerText = formatOperands(state.operands) + " " + state.output;
 
-update(getState());
-subscribe(update);
+  const fragment = new DocumentFragment();
+
+  state.history.forEach((entry, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button">X</button> ${formatOperands(
+      entry.operands
+    )} = ${entry.output}`;
+    fragment.appendChild(li);
+
+    li.addEventListener("click", (event) => {
+      if (event.target instanceof HTMLButtonElement) {
+        updaters.removeHistoryEntry(index);
+      }
+    });
+  });
+
+  history.replaceChildren(fragment);
+}
+
+const { updaters } = store;
+
+update(store.getState());
+store.subscribe(update);
 
 function handleNumber(event: Event) {
   const value = (event.currentTarget as HTMLElement).dataset.number;
@@ -69,9 +89,8 @@ function handleNumber(event: Event) {
 
 function handleOperator(event: Event) {
   const operator = (event.target as HTMLElement).dataset.operator;
-  if (operator === undefined) {
-    throw new Error("invariant error: button does not have an operator");
-  }
+  invariant(operator, "button does not have an operator");
+
   const value = Number.parseFloat(result.innerText);
   updaters.operator(value, operator);
 }
@@ -94,5 +113,9 @@ function handleKeydown(event: KeyboardEvent) {
   } else if (/^(\+|-|\*|\/)$/.test(event.key)) {
     const value = Number.parseFloat(result.innerText);
     updaters.operator(value, event.key);
+  } else if (event.key === "Enter") {
+    // event.preventDefault();
+    updaters.calculate();
   }
+  console.log(event.key);
 }
