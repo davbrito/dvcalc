@@ -27,12 +27,6 @@ body {
   margin: 0;
 }
 
-@media (max-width: 480px) {
-  body {
-    grid-template-columns: 1fr;
-  }
-}
-
 .calculator {
   outline-offset: 3px;
   width: clamp(100px, 90vw, 300px);
@@ -196,4 +190,18 @@ output {
   background-color: #141414;
 }
 
-/*# sourceMappingURL=index.87d91561.css.map */
+@media (max-width: 480px) {
+  body {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator {
+    margin: 1rem 1rem 0;
+  }
+
+  #history {
+    padding: 0 1rem 1rem;
+  }
+}
+
+/*# sourceMappingURL=index.92b8cdcd.css.map */
