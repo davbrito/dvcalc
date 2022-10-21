@@ -1,0 +1,79 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+  display: grid;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.calculator {
+  grid-template-columns: repeat(4, 50px);
+  gap: 1px;
+  display: grid;
+}
+
+button {
+  height: 50px;
+  border: 0;
+  border-radius: 2px;
+  outline-style: dashed;
+  outline-color: #0000;
+  margin: 0;
+  padding: 0;
+  transition: background-color .1s ease-in-out;
+}
+
+button:focus {
+  box-shadow: inset 0 0 0 2px #d3d3d3;
+}
+
+button:focus-visible {
+  box-shadow: inset 0 0 0 2px gray;
+}
+
+button:active {
+  background-color: #d3d3d3;
+}
+
+button[data-operator]:before {
+  content: attr(data-operator);
+}
+
+button[data-number]:before {
+  content: attr(data-number);
+}
+
+button[data-clear], output {
+  grid-column: span 4;
+}
+
+button[data-clear] {
+  color: #fff;
+  background-color: #6a5acd;
+}
+
+button[data-clear]:active {
+  color: #fff;
+  background-color: #5f52b9;
+}
+
+button[data-clear]:focus-visible, button[data-clear]:focus {
+  color: #fff;
+  box-shadow: inset 0 0 0 2px #52469e;
+}
+
+output {
+  flex-direction: row-reverse;
+  padding: .5rem;
+  font-size: 1.5rem;
+  display: flex;
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=index.d6a4e0ef.css.map */

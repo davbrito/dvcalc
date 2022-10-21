@@ -62,15 +62,12 @@ function $b9dff960cd1c7100$var$handleDot() {
 }
 function $b9dff960cd1c7100$var$operate(operator, leftOperand, rightOperand) {
     return ({
-        "+": (a, b)=>a + b
-        ,
-        "-": (a, b)=>a - b
-        ,
-        "*": (a, b)=>a * b
-        ,
+        "+": (a, b)=>a + b,
+        "-": (a, b)=>a - b,
+        "*": (a, b)=>a * b,
         "/": (a, b)=>a / b
     })[operator](leftOperand, rightOperand);
 }
 
 
-//# sourceMappingURL=index.401da29f.js.map
+//# sourceMappingURL=index.436b11dc.js.map
