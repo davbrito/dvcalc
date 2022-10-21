@@ -54,15 +54,17 @@ function update(state: State) {
     state.output;
 }
 
-update(store.getState());
-store.subscribe(update);
+const { updaters, getState, subscribe } = store;
+
+update(getState());
+subscribe(update);
 
 function handleNumber(event: Event) {
   const value = (event.currentTarget as HTMLElement).dataset.number;
   if (value === undefined) {
     throw new Error("invariant error: button does not have a number value");
   }
-  store.input(value);
+  updaters.input(value);
 }
 
 function handleOperator(event: Event) {
@@ -71,26 +73,26 @@ function handleOperator(event: Event) {
     throw new Error("invariant error: button does not have an operator");
   }
   const value = Number.parseFloat(result.innerText);
-  store.operator(value, operator);
+  updaters.operator(value, operator);
 }
 
 function handleCalculate() {
-  store.calculate();
+  updaters.calculate();
 }
 
 function handleClear() {
-  store.clear();
+  updaters.clear();
 }
 
 function handleDot() {
-  store.dot();
+  updaters.dot();
 }
 
 function handleKeydown(event: KeyboardEvent) {
   if (/^\d$/.test(event.key)) {
-    store.input(event.key);
+    updaters.input(event.key);
   } else if (/^(\+|-|\*|\/)$/.test(event.key)) {
     const value = Number.parseFloat(result.innerText);
-    store.operator(value, event.key);
+    updaters.operator(value, event.key);
   }
 }
