@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DvCalc</title>
 
-    <script defer type="module" src="index.js"></script>
+    <script defer type="module" src="index.ts"></script>
     <!-- Prueba 1 -->
   </head>
 
   <body>
     <div class="calculator">
-      <output>0</output>
+      <div id="output-wrapper" class="output-wrapper">
+        <output>
+          <div id="operation"></div>
+          <div id="result">0</div>
+        </output>
+      </div>
       <button data-number="1"></button>
       <button data-number="2"></button>
       <button data-number="3"></button>
