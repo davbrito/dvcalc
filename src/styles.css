@@ -31,12 +31,6 @@ body {
   margin: 0;
 }
 
-@media (max-width: 480px) {
-  body {
-    grid-template-columns: 1fr;
-  }
-}
-
 .calculator {
   margin: 3rem;
   place-self: center;
@@ -201,5 +195,20 @@ output {
     &:hover {
       background-color: #141414;
     }
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator {
+    margin: 1rem 1rem 0 1rem;
+  }
+
+  #history {
+    padding: 1rem;
+    padding-top: 0;
   }
 }
