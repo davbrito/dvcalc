@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DvCalc</title>
 
-    <link rel="stylesheet" href="/dvcalc/index.c557469c.css"><script type="module" src="/dvcalc/index.f4b78c36.js"></script><script src="/dvcalc/index.b7e42f1c.js" nomodule="" defer=""></script>
+    <link rel="stylesheet" href="/dvcalc/index.87d91561.css"><script type="module" src="/dvcalc/index.5a58c02b.js"></script><script src="/dvcalc/index.3e2f1231.js" nomodule="" defer=""></script>
     <!-- Prueba 1 -->
   </head>
 
   <body>
-    <div class="calculator">
+    <section class="calculator">
       <div id="output-wrapper" class="output-wrapper">
         <output>
           <div id="operation"></div>
@@ -34,6 +34,10 @@
       <button data-calculate="">=</button>
       <button data-operator="/"></button>
       <button data-clear="">C</button>
-    </div>
+    </section>
+    <aside id="history">
+      <h3>Historial</h3>
+      <ol id="history-list"></ol>
+    </aside>
   </body>
 </html>

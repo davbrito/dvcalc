@@ -132,9 +132,15 @@ function $8be15738f290fa57$var$isValidOperator(value) {
         "*"
     ].includes(value);
 }
+const $8be15738f290fa57$var$historyKey = "dvcalc-history";
+const $8be15738f290fa57$var$initialHistory = JSON.parse(localStorage.getItem($8be15738f290fa57$var$historyKey) || "[]") || [];
+window.addEventListener("beforeunload", ()=>{
+    localStorage.setItem($8be15738f290fa57$var$historyKey, JSON.stringify($8be15738f290fa57$export$6f57813fe9f31bf9.getState().history));
+});
 const $8be15738f290fa57$var$initialState = {
     output: "0",
-    operands: []
+    operands: [],
+    history: $8be15738f290fa57$var$initialHistory
 };
 const $8be15738f290fa57$export$6f57813fe9f31bf9 = new (0, $0e936c10659c7ddb$export$390f32400eaf98c9)($8be15738f290fa57$var$initialState, {
     operator (state, value, operator) {
@@ -147,11 +153,13 @@ const $8be15738f290fa57$export$6f57813fe9f31bf9 = new (0, $0e936c10659c7ddb$expo
             }
         ];
         return {
+            ...state,
             operands: operands,
             output: "0"
         };
     },
     calculate (state) {
+        if (state.operands.length == 0) return state;
         const finalOperands = [
             ...state.operands,
             {
@@ -172,9 +180,18 @@ const $8be15738f290fa57$export$6f57813fe9f31bf9 = new (0, $0e936c10659c7ddb$expo
                 operator: right.operator
             };
         });
+        const output = String(result.value);
+        const history = [
+            ...state.history,
+            {
+                output: output,
+                operands: finalOperands
+            }
+        ];
         return {
+            history: history,
             operands: [],
-            output: String(result.value)
+            output: output
         };
     },
     input (state, value) {
@@ -184,8 +201,9 @@ const $8be15738f290fa57$export$6f57813fe9f31bf9 = new (0, $0e936c10659c7ddb$expo
             output: output
         };
     },
-    clear () {
+    clear (state) {
         return {
+            ...state,
             output: "0",
             operands: []
         };
@@ -196,6 +214,12 @@ const $8be15738f290fa57$export$6f57813fe9f31bf9 = new (0, $0e936c10659c7ddb$expo
             output: state.output + "."
         };
         return state;
+    },
+    removeHistoryEntry (state, index) {
+        return {
+            ...state,
+            history: state.history.filter((_, currentIndex)=>currentIndex !== index)
+        };
     }
 });
 
@@ -215,6 +239,7 @@ const $bc8f58a6aa3a7a47$var$dot = $bc8f58a6aa3a7a47$var$select("button[data-dot]
 const $bc8f58a6aa3a7a47$var$result = $bc8f58a6aa3a7a47$var$select("#result");
 const $bc8f58a6aa3a7a47$var$operation = $bc8f58a6aa3a7a47$var$select("#operation");
 const $bc8f58a6aa3a7a47$var$outputWrapper = $bc8f58a6aa3a7a47$var$select("#output-wrapper");
+const $bc8f58a6aa3a7a47$var$history = $bc8f58a6aa3a7a47$var$select("#history-list");
 $bc8f58a6aa3a7a47$var$calculate.addEventListener("click", $bc8f58a6aa3a7a47$var$handleCalculate);
 $bc8f58a6aa3a7a47$var$clear.addEventListener("click", $bc8f58a6aa3a7a47$var$handleClear);
 $bc8f58a6aa3a7a47$var$dot.addEventListener("click", $bc8f58a6aa3a7a47$var$handleDot);
@@ -231,19 +256,32 @@ $bc8f58a6aa3a7a47$var$numbers.forEach((button)=>{
 $bc8f58a6aa3a7a47$var$operators.forEach((button)=>{
     button.addEventListener("click", $bc8f58a6aa3a7a47$var$handleOperator);
 });
-function $bc8f58a6aa3a7a47$var$update(state) {
-    $bc8f58a6aa3a7a47$var$result.innerText = state.output;
-    $bc8f58a6aa3a7a47$var$operation.innerText = state.operands.reduce((acc, curr)=>{
+function $bc8f58a6aa3a7a47$var$formatOperands(operands) {
+    return operands.reduce((acc, curr)=>{
         return [
             acc,
             curr.value,
             curr.operator
         ].filter((item)=>item != null).join(" ");
-    }, "") + " " + state.output;
+    }, "");
 }
-const { updaters: $bc8f58a6aa3a7a47$var$updaters , getState: $bc8f58a6aa3a7a47$var$getState , subscribe: $bc8f58a6aa3a7a47$var$subscribe  } = (0, $8be15738f290fa57$export$6f57813fe9f31bf9);
-$bc8f58a6aa3a7a47$var$update($bc8f58a6aa3a7a47$var$getState());
-$bc8f58a6aa3a7a47$var$subscribe($bc8f58a6aa3a7a47$var$update);
+function $bc8f58a6aa3a7a47$var$update(state) {
+    $bc8f58a6aa3a7a47$var$result.innerText = state.output;
+    $bc8f58a6aa3a7a47$var$operation.innerText = $bc8f58a6aa3a7a47$var$formatOperands(state.operands) + " " + state.output;
+    const fragment = new DocumentFragment();
+    state.history.forEach((entry, index)=>{
+        const li = document.createElement("li");
+        li.innerHTML = `<button type="button">X</button> ${$bc8f58a6aa3a7a47$var$formatOperands(entry.operands)} = ${entry.output}`;
+        fragment.appendChild(li);
+        li.addEventListener("click", (event)=>{
+            if (event.target instanceof HTMLButtonElement) $bc8f58a6aa3a7a47$var$updaters.removeHistoryEntry(index);
+        });
+    });
+    $bc8f58a6aa3a7a47$var$history.replaceChildren(fragment);
+}
+const { updaters: $bc8f58a6aa3a7a47$var$updaters  } = (0, $8be15738f290fa57$export$6f57813fe9f31bf9);
+$bc8f58a6aa3a7a47$var$update((0, $8be15738f290fa57$export$6f57813fe9f31bf9).getState());
+(0, $8be15738f290fa57$export$6f57813fe9f31bf9).subscribe($bc8f58a6aa3a7a47$var$update);
 function $bc8f58a6aa3a7a47$var$handleNumber(event) {
     const value = event.currentTarget.dataset.number;
     if (value === undefined) throw new Error("invariant error: button does not have a number value");
@@ -251,7 +289,7 @@ function $bc8f58a6aa3a7a47$var$handleNumber(event) {
 }
 function $bc8f58a6aa3a7a47$var$handleOperator(event) {
     const operator = event.target.dataset.operator;
-    if (operator === undefined) throw new Error("invariant error: button does not have an operator");
+    (0, $56f8c318710251e7$export$f5708dca728d7177)(operator, "button does not have an operator");
     const value = Number.parseFloat($bc8f58a6aa3a7a47$var$result.innerText);
     $bc8f58a6aa3a7a47$var$updaters.operator(value, operator);
 }
@@ -269,8 +307,10 @@ function $bc8f58a6aa3a7a47$var$handleKeydown(event) {
     else if (/^(\+|-|\*|\/)$/.test(event.key)) {
         const value = Number.parseFloat($bc8f58a6aa3a7a47$var$result.innerText);
         $bc8f58a6aa3a7a47$var$updaters.operator(value, event.key);
-    }
+    } else if (event.key === "Enter") // event.preventDefault();
+    $bc8f58a6aa3a7a47$var$updaters.calculate();
+    console.log(event.key);
 }
 
 })();
-//# sourceMappingURL=index.b7e42f1c.js.map
+//# sourceMappingURL=index.3e2f1231.js.map
