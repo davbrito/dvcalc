@@ -82,6 +82,11 @@ button {
   }
 }
 
+button[data-clear],
+.output-wrapper {
+  grid-column: span 4;
+}
+
 button {
   &:is(:focus, :focus-visible) {
     box-shadow: inset 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
@@ -106,11 +111,6 @@ button {
 
   &[data-number]::before {
     content: attr(data-number);
-  }
-
-  &[data-clear],
-  .output-wrapper {
-    grid-column: span 4;
   }
 
   &[data-clear] {
