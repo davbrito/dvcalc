@@ -1,80 +1,156 @@
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  place-items: center;
-}
-
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-.calculator {
+html {
+  background-color: hsl(0, 0%, 90%);
+  color-scheme: light dark;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
   display: grid;
-  grid-template-columns: repeat(4, 50px);
+  place-items: center;
+  font-size: 1rem;
+}
+
+.calculator {
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
+  outline: 3px solid rebeccapurple;
+  outline-offset: 3px;
+  width: clamp(100px, 90vw, 300px);
 }
 
 button {
   margin: 0;
   padding: 0;
-  height: 50px;
   border: 0;
   transition: background-color 100ms ease-in-out;
   outline-color: transparent;
   outline-style: dashed;
   border-radius: 2px;
+  background-color: var(--button-bg);
+  color: var(--button-color);
+
+  --button-bg: #6b6b6b;
+  --button-color: #fff;
+  --button-active-bg: rgb(62, 62, 62);
+  --clear-bg: rgb(106, 90, 205);
+  --clear-active-bg: rgb(95, 82, 185);
+  --clear-focus-ring: rgb(65, 65, 65);
+  --focus-ring-color: rgb(119, 119, 119);
+  --focus-visible-ring: rgb(46, 46, 46);
+  --focus-ring-width: 2px;
+
+  &[data-clear] {
+    height: 50px;
+  }
 }
 
-button:focus {
-  box-shadow: inset 0 0 0 2px lightgray;
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #1e1e1e;
+  }
+
+  button {
+    font-weight: bold;
+    --button-active-bg: rgb(47, 47, 47);
+    --clear-bg: rgb(106, 90, 205);
+    --clear-active-bg: rgb(95, 82, 185);
+    --clear-focus-ring: hsl(250, 32%, 80%);
+    --focus-ring-color: lightgray;
+    --focus-visible-ring: white;
+  }
+
+  #result {
+    color: white;
+  }
 }
 
-button:focus-visible {
-  box-shadow: inset 0 0 0 2px gray;
+button {
+  &:is(:focus, :focus-visible) {
+    box-shadow: inset 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+    z-index: 1;
+  }
+
+  &:focus-visible {
+    --focus-ring-color: var(--focus-visible-ring);
+  }
+
+  &:active {
+    --button-bg: var(--button-active-bg);
+  }
+
+  &:is([data-number], [data-operator], [data-dot], [data-calculate]) {
+    aspect-ratio: 1;
+  }
+
+  &[data-operator]::before {
+    content: attr(data-operator);
+  }
+
+  &[data-number]::before {
+    content: attr(data-number);
+  }
+
+  &[data-clear],
+  .output-wrapper {
+    grid-column: span 4;
+  }
+
+  &[data-clear] {
+    --button-bg: var(--clear-bg);
+
+    &:active {
+      background-color: var(--clear-active-bg);
+      color: white;
+    }
+
+    &:is(:focus-visible, :focus) {
+      --focus-ring-color: var(--clear-focus-ring);
+    }
+  }
 }
 
-button:active {
-  background-color: lightgray;
-}
-
-button[data-operator]::before {
-  content: attr(data-operator);
-}
-
-button[data-number]::before {
-  content: attr(data-number);
-}
-
-button[data-clear],
 output {
-  grid-column: span 4;
+  display: flex;
+  text-align: end;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-button[data-clear] {
-  background-color: rgb(106, 90, 205);
-  color: white;
-}
-
-button[data-clear]:active {
-  background-color: rgb(95, 82, 185);
-  color: white;
-}
-
-button[data-clear]:focus-visible,
-button[data-clear]:focus {
-  box-shadow: inset 0 0 0 2px rgb(82, 70, 158);
-  color: white;
-}
-
-output {
+.output-wrapper {
+  overflow: auto;
   padding: 0.5rem;
-  font-size: 1.5rem;
   display: flex;
   flex-direction: row-reverse;
-  overflow: hidden;
+}
+
+#result {
+  font-size: 1.5rem;
+}
+
+#operation {
+  font-size: 0.8rem;
+  color: grey;
+}
+
+#result,
+#operation {
+  white-space: nowrap;
 }

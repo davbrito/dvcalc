@@ -14,9 +14,19 @@
     "javascript"
   ],
   "devDependencies": {
-    "parcel": "^2.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^8.25.0",
+    "eslint-config-prettier": "^8.5.0",
+    "parcel": "^2.7.0",
     "push-dir": "^0.4.1",
-    "shx": "^0.3.3"
+    "shx": "^0.3.4",
+    "typescript": "^4.8.4"
   },
-  "browserslist": "> 0.5%, last 2 versions, not dead"
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "@parcel/transformer-css": {
+    "drafts": {
+      "nesting": true
+    }
+  }
 }
