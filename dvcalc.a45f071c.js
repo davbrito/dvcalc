@@ -1,116 +1,43 @@
-function $33d0def40a470f8c$export$2e2bcd8739ae039(receiver, privateMap, action) {
-    if (!privateMap.has(receiver)) throw new TypeError("attempted to " + action + " private field on non-instance");
-    return privateMap.get(receiver);
-}
-
-
-function $90250f0c1138d8e5$export$2e2bcd8739ae039(receiver, descriptor) {
-    if (descriptor.get) return descriptor.get.call(receiver);
-    return descriptor.value;
-}
-
-
-function $f60fad5b20b234d6$export$2e2bcd8739ae039(receiver, privateMap) {
-    var descriptor = (0, $33d0def40a470f8c$export$2e2bcd8739ae039)(receiver, privateMap, "get");
-    return (0, $90250f0c1138d8e5$export$2e2bcd8739ae039)(receiver, descriptor);
-}
-
-
-function $45afc2b5f744e104$export$2e2bcd8739ae039(obj, privateCollection) {
-    if (privateCollection.has(obj)) throw new TypeError("Cannot initialize the same private elements twice on an object");
-}
-
-
-function $c893c3322a57dec7$export$2e2bcd8739ae039(obj, privateMap, value) {
-    (0, $45afc2b5f744e104$export$2e2bcd8739ae039)(obj, privateMap);
-    privateMap.set(obj, value);
-}
-
-
-
-function $f0d172d14877e1f2$export$2e2bcd8739ae039(receiver, descriptor, value) {
-    if (descriptor.set) descriptor.set.call(receiver, value);
-    else {
-        if (!descriptor.writable) // This should only throw in strict mode, but class bodies are
-        // always strict and private fields can only be used inside
-        // class bodies.
-        throw new TypeError("attempted to set read only private field");
-        descriptor.value = value;
-    }
-}
-
-
-function $59f8bf8018fb608d$export$2e2bcd8739ae039(receiver, privateMap, value) {
-    var descriptor = (0, $33d0def40a470f8c$export$2e2bcd8739ae039)(receiver, privateMap, "set");
-    (0, $f0d172d14877e1f2$export$2e2bcd8739ae039)(receiver, descriptor, value);
-    return value;
-}
-
-
-function $7f5d6e7333d37572$export$2e2bcd8739ae039(receiver, privateSet, fn) {
-    if (!privateSet.has(receiver)) throw new TypeError("attempted to get private field on non-instance");
-    return fn;
-}
-
-
-
-function $d51767bdcffbe82b$export$2e2bcd8739ae039(obj, privateSet) {
-    (0, $45afc2b5f744e104$export$2e2bcd8739ae039)(obj, privateSet);
-    privateSet.add(obj);
-}
-
-
-var $20aab3d10f5eaa82$var$_listeners = /*#__PURE__*/ new WeakMap(), $20aab3d10f5eaa82$var$_state = /*#__PURE__*/ new WeakMap(), $20aab3d10f5eaa82$var$_updaters = /*#__PURE__*/ new WeakMap(), $20aab3d10f5eaa82$var$_runListeners = /*#__PURE__*/ new WeakSet(), $20aab3d10f5eaa82$var$_makeUpdaters = /*#__PURE__*/ new WeakSet();
 class $20aab3d10f5eaa82$export$390f32400eaf98c9 {
+    #listeners;
+    #state;
+    #updaters;
+    #runListeners(snapshot) {
+        this.#listeners.forEach((listener)=>listener(snapshot));
+    }
+    #makeUpdaters(updatersMap) {
+        return Object.fromEntries(Object.entries(updatersMap).map(([key, value])=>{
+            return [
+                key,
+                (...args)=>{
+                    if (!value) return;
+                    const oldState = this.#state;
+                    const newState = value(oldState, ...args);
+                    if (oldState !== newState) {
+                        const snapshot = this.#state = Object.freeze(newState);
+                        this.#runListeners(snapshot);
+                    }
+                }
+            ];
+        }));
+    }
+    constructor(initialState, updatersMap){
+        this.#listeners = new Set();
+        this.#state = Object.freeze(initialState);
+        this.#updaters = this.#makeUpdaters(updatersMap);
+    }
     subscribe(listener) {
-        (0, $f60fad5b20b234d6$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_listeners).add(listener);
+        this.#listeners.add(listener);
         return ()=>{
-            (0, $f60fad5b20b234d6$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_listeners).delete(listener);
+            this.#listeners.delete(listener);
         };
     }
     getState() {
-        return Object.freeze((0, $f60fad5b20b234d6$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_state));
+        return Object.freeze(this.#state);
     }
     get updaters() {
-        return Object.freeze((0, $f60fad5b20b234d6$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_updaters));
+        return Object.freeze(this.#updaters);
     }
-    constructor(initialState, updatersMap){
-        (0, $d51767bdcffbe82b$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_runListeners);
-        (0, $d51767bdcffbe82b$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_makeUpdaters);
-        (0, $c893c3322a57dec7$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_listeners, {
-            writable: true,
-            value: new Set()
-        });
-        (0, $c893c3322a57dec7$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_state, {
-            writable: true,
-            value: void 0
-        });
-        (0, $c893c3322a57dec7$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_updaters, {
-            writable: true,
-            value: void 0
-        });
-        (0, $59f8bf8018fb608d$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_state, Object.freeze(initialState));
-        (0, $59f8bf8018fb608d$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_updaters, (0, $7f5d6e7333d37572$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_makeUpdaters, $20aab3d10f5eaa82$var$makeUpdaters).call(this, updatersMap));
-    }
-}
-function $20aab3d10f5eaa82$var$runListeners(snapshot) {
-    (0, $f60fad5b20b234d6$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_listeners).forEach((listener)=>listener(snapshot));
-}
-function $20aab3d10f5eaa82$var$makeUpdaters(updatersMap) {
-    return Object.fromEntries(Object.entries(updatersMap).map(([key, value])=>{
-        return [
-            key,
-            (...args)=>{
-                if (!value) return;
-                const oldState = (0, $f60fad5b20b234d6$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_state);
-                const newState = value(oldState, ...args);
-                if (oldState !== newState) {
-                    const snapshot = (0, $59f8bf8018fb608d$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_state, Object.freeze(newState));
-                    (0, $7f5d6e7333d37572$export$2e2bcd8739ae039)(this, $20aab3d10f5eaa82$var$_runListeners, $20aab3d10f5eaa82$var$runListeners).call(this, snapshot);
-                }
-            }, 
-        ];
-    }));
 }
 
 
@@ -164,7 +91,7 @@ const $03a9e6848100b442$export$6f57813fe9f31bf9 = new (0, $20aab3d10f5eaa82$expo
             {
                 value: Number.parseFloat(state.output),
                 operator: null
-            }, 
+            }
         ];
         const result = finalOperands.reduce((left, right)=>{
             (0, $bdf0195f3bc674cc$export$f5708dca728d7177)(left.operator, "operator is required");
@@ -278,7 +205,7 @@ function $d69556644bb6dc7a$var$update(state) {
     });
     $d69556644bb6dc7a$var$history.replaceChildren(fragment);
 }
-const { updaters: $d69556644bb6dc7a$var$updaters  } = (0, $03a9e6848100b442$export$6f57813fe9f31bf9);
+const { updaters: $d69556644bb6dc7a$var$updaters } = (0, $03a9e6848100b442$export$6f57813fe9f31bf9);
 $d69556644bb6dc7a$var$update((0, $03a9e6848100b442$export$6f57813fe9f31bf9).getState());
 (0, $03a9e6848100b442$export$6f57813fe9f31bf9).subscribe($d69556644bb6dc7a$var$update);
 function $d69556644bb6dc7a$var$handleNumber(event) {
@@ -312,4 +239,4 @@ function $d69556644bb6dc7a$var$handleKeydown(event) {
 }
 
 
-//# sourceMappingURL=index.5a58c02b.js.map
+//# sourceMappingURL=dvcalc.a45f071c.js.map
